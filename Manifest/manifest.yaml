@@ -36,8 +36,8 @@ spec:
           env:
             - name: DOTNET_ENVIRONMENT
               value: Development
-            - name: MONGODB_CONNECTIONSTRING
-              value: "mongodb://mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/NoteDb?replicaSet=rs0"
+            # - name: MONGODB_CONNECTIONSTRING
+            #   value: "mongodb://mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/NoteDb?replicaSet=rs0"
 ---
 apiVersion: v1
 kind: Service
