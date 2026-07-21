@@ -18,26 +18,44 @@ spec:
     metadata:
       labels:
         app: dotnet-noteapp
-      annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "noteapp"
-        vault.hashicorp.com/agent-inject-secret-mongodb__connectionstring: "secret/data/noteapp"
-        vault.hashicorp.com/agent-inject-template-mongodb__connectionstring: |
-          {{- with secret "secret/data/noteapp" -}}
-          {{ .Data.data.mongodb__connectionstring }}
-          {{- end }}
     spec:
       serviceAccountName: noteapp-sa
       containers:
         - name: dotnet-noteapp
           image: jysh06/noteapp:v13
+          imagePullPolicy: Always
           ports:
             - containerPort: 5050
+
           env:
             - name: DOTNET_ENVIRONMENT
               value: Development
-            # - name: MONGODB_CONNECTIONSTRING
-            #   value: "mongodb://mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/NoteDb?replicaSet=rs0"
+
+            - name: MONGODB_CONNECTIONSTRING
+              value: "mongodb://mongo-0.mongo.webapps.svc.cluster.local:27017,mongo-1.mongo.webapps.svc.cluster.local:27017,mongo-2.mongo.webapps.svc.cluster.local:27017/NoteDb?replicaSet=rs0"
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5050
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5050
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
 ---
 apiVersion: v1
 kind: Service
@@ -45,10 +63,10 @@ metadata:
   name: dotnet-noteapp
   namespace: webapps
 spec:
+  type: LoadBalancer
   selector:
     app: dotnet-noteapp
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
       targetPort: 5050
-  type: LoadBalancer
-
