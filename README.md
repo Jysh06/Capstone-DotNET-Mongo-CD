@@ -162,3 +162,163 @@ Capstone-DotNET-Mongo-CD
 ├── cert-manager
 └── README.md
 ```
+---
+
+# 🔐 Secrets Management with HashiCorp Vault
+
+Application secrets are managed using **HashiCorp Vault**, eliminating the need to store sensitive information in Kubernetes manifests, ConfigMaps, or source code.
+
+A highly available Vault cluster is deployed on Amazon EKS using **Helm** with custom values. The **Vault Agent Injector** automatically injects secrets into application pods at runtime through a sidecar container.
+
+### Secret Injection Workflow
+
+```text
+Application Pod
+      │
+      ▼
+Vault Agent Sidecar
+      │
+Authenticate using Kubernetes Auth
+      │
+      ▼
+HashiCorp Vault
+      │
+Retrieve Secrets
+      │
+      ▼
+Write Secrets to Shared Volume
+      │
+      ▼
+Application Reads Secrets
+```
+
+### Highlights
+
+- High Availability Vault deployment
+- Vault Agent Injector
+- Kubernetes Authentication
+- Runtime secret injection
+- No hardcoded credentials
+- Helm-based deployment with custom values
+- Centralized secret management
+
+---
+
+# 📊 Monitoring & Observability
+
+The platform includes a complete monitoring stack to provide real-time visibility into the Kubernetes cluster and deployed workloads.
+
+## Monitoring Stack
+
+| Component | Purpose |
+|----------|---------|
+| Prometheus | Metrics collection |
+| Node Exporter | Node-level metrics |
+| Grafana | Dashboards & visualization |
+| Alertmanager | Alert routing and notifications |
+
+### Metrics Collected
+
+- Kubernetes Cluster Health
+- Node CPU & Memory Usage
+- Pod Resource Utilization
+- Application Performance
+- Persistent Volume Usage
+- Network Statistics
+
+---
+
+# 🔒 Platform Security
+
+Security is integrated throughout the Kubernetes platform following DevSecOps best practices.
+
+### Security Features
+
+- HashiCorp Vault for secrets management
+- Runtime secret injection
+- Kubernetes RBAC
+- Namespace isolation
+- ClusterIP services for internal communication
+- MongoDB inaccessible from the public internet
+- HTTPS Ingress using cert-manager
+- TLS certificates from Let's Encrypt
+- Principle of Least Privilege
+- GitOps-based deployment approvals
+
+---
+
+# 🏗 Namespace Architecture
+
+The platform separates workloads into dedicated namespaces for better organization and security.
+
+| Namespace | Purpose |
+|----------|---------|
+| `webapps` | ASP.NET Core application & MongoDB |
+| `vault` | HashiCorp Vault |
+| `monitoring` | Prometheus, Grafana & Alertmanager |
+| `sonarqube` | SonarQube Server |
+
+Namespace isolation improves security, access control, and operational management.
+
+---
+
+# 🌐 Application Exposure
+
+The application is securely exposed using an **NGINX Ingress Controller**.
+
+### Features
+
+- HTTPS-only access
+- TLS termination
+- Automatic certificate management
+- Let's Encrypt integration
+- ClusterIP backend services
+- External Load Balancer
+
+```text
+Internet
+    │
+    ▼
+AWS Load Balancer
+    │
+    ▼
+NGINX Ingress Controller
+    │
+    ▼
+ClusterIP Service
+    │
+    ▼
+ASP.NET Core Pods
+```
+
+---
+
+
+# 🚀 Future Enhancements
+
+- Argo Rollouts for Blue-Green and Canary deployments
+- Horizontal Pod Autoscaler (HPA)
+- Vertical Pod Autoscaler (VPA)
+- Kubernetes Network Policies
+- Kyverno or OPA Gatekeeper for policy enforcement
+- External Secrets Operator integration
+- Multi-environment GitOps (Dev, QA, Production)
+- Disaster Recovery and backup automation
+- Multi-cluster ArgoCD deployment
+
+---
+
+# 👨‍💻 Author
+
+**Jayesh Patil**
+
+**DevOps/DevSecOps | Cloud Engineer | Kubernetes | AWS**
+
+- **GitHub:** https://github.com/Jysh06
+- **LinkedIn:** https://www.linkedin.com/in/jayeshpatil12
+
+---
+
+## ⭐ If you found this project helpful, consider giving it a star!
+
+This repository demonstrates a production-inspired **GitOps Continuous Delivery Platform** built on **Amazon EKS**, showcasing secure Kubernetes deployments, automated synchronization with ArgoCD, centralized secrets management using HashiCorp Vault, and a complete observability stack with Prometheus, Grafana, and ELK.
